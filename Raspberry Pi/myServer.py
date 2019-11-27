@@ -9,8 +9,8 @@ class CoAPServer(CoAP):
         print ("CoAP Server start on " + host + ":" + str(port))
 
 def main():
-    ip = "192.168.137.10"	#Raspberry Pi's ip
-    port = 5683		#CoAP port number
+    ip = "192.168.137.10"
+    port = 5683
 
     server = CoAPServer(ip, port)
 
@@ -22,4 +22,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

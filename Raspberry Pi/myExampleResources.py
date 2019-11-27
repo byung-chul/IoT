@@ -8,6 +8,7 @@ from coapthon.resources.resource import Resource
 __author__ = 'Giacomo Tanganelli'
 __editor__ = 'Byung Chul'
 
+
 class BasicResource(Resource):
     def __init__(self, name="BasicResource", coap_server=None):
         super(BasicResource, self).__init__(name, coap_server, visible=True,
@@ -30,6 +31,8 @@ class BasicResource(Resource):
 
     def render_DELETE(self, request):
         return True
+
+
 class Storage(Resource):
     def __init__(self, name="StorageResource", coap_server=None):
         super(Storage, self).__init__(name, coap_server, visible=True, observable=True, allow_children=True)
@@ -41,6 +44,8 @@ class Storage(Resource):
     def render_POST(self, request):
         res = self.init_resource(request, BasicResource())
         return res
+
+
 class Child(Resource):
     def __init__(self, name="ChildResource", coap_server=None):
         super(Child, self).__init__(name, coap_server, visible=True, observable=True, allow_children=True)
@@ -61,7 +66,10 @@ class Child(Resource):
 
     def render_DELETE(self, request):
         return True
+
+
 class Separate(Resource):
+
     def __init__(self, name="Separate", coap_server=None):
         super(Separate, self).__init__(name, coap_server, visible=True, observable=True, allow_children=True)
         self.payload = "Separate"
@@ -93,7 +101,10 @@ class Separate(Resource):
 
     def render_DELETE_separate(self, request):
         return True
+
+
 class Long(Resource):
+
     def __init__(self, name="Long", coap_server=None):
         super(Long, self).__init__(name, coap_server, visible=True, observable=True, allow_children=True)
         self.payload = "Long Time"
@@ -101,7 +112,10 @@ class Long(Resource):
     def render_GET(self, request):
         time.sleep(10)
         return self
+
+
 class Big(Resource):
+
     def __init__(self, name="Big", coap_server=None):
         super(Big, self).__init__(name, coap_server, visible=True, observable=True, allow_children=True)
         self.payload = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sollicitudin fermentum ornare. " \
@@ -135,17 +149,23 @@ class Big(Resource):
         if request.payload is not None:
             self.payload = request.payload
         return self
+
+
 class voidResource(Resource):
     def __init__(self, name="Void"):
         super(voidResource, self).__init__(name)
+
+
 class XMLResource(Resource):
     def __init__(self, name="XML"):
         super(XMLResource, self).__init__(name)
         self.value = 0
-        self.payload = (defines.Content_types["application/xml"], "<value>" + str(self.value) + "</value>")
+        self.payload = (defines.Content_types["application/xml"], "<value>"+str(self.value)+"</value>")
 
     def render_GET(self, request):
         return self
+
+
 class MultipleEncodingResource(Resource):
     def __init__(self, name="MultipleEncoding"):
         super(MultipleEncodingResource, self).__init__(name)
@@ -155,9 +175,9 @@ class MultipleEncodingResource(Resource):
 
     def render_GET(self, request):
         if request.accept == defines.Content_types["application/xml"]:
-            self.payload = (defines.Content_types["application/xml"], "<value>" + str(self.value) + "</value>")
+            self.payload = (defines.Content_types["application/xml"],  "<value>"+str(self.value)+"</value>")
         elif request.accept == defines.Content_types["application/json"]:
-            self.payload = (defines.Content_types["application/json"], "{'value': '" + str(self.value) + "'}")
+            self.payload = (defines.Content_types["application/json"], "{'value': '"+str(self.value)+"'}")
         elif request.accept == defines.Content_types["text/plain"]:
             self.payload = (defines.Content_types["text/plain"], str(self.value))
         return self
@@ -169,6 +189,8 @@ class MultipleEncodingResource(Resource):
     def render_POST(self, request):
         res = self.init_resource(request, MultipleEncodingResource())
         return res
+
+
 class ETAGResource(Resource):
     def __init__(self, name="ETag"):
         super(ETAGResource, self).__init__(name)
@@ -188,6 +210,8 @@ class ETAGResource(Resource):
     def render_PUT(self, request):
         self.payload = request.payload
         return self
+
+
 class AdvancedResource(Resource):
     def __init__(self, name="Advanced"):
         super(AdvancedResource, self).__init__(name)
@@ -202,7 +226,7 @@ class AdvancedResource(Resource):
     def render_POST_advanced(self, request, response):
         self.payload = request.payload
         from coapthon.messages.response import Response
-        assert (isinstance(response, Response))
+        assert(isinstance(response, Response))
         response.payload = "Response changed through POST"
         response.code = defines.Codes.CREATED.number
         return self, response
@@ -210,28 +234,39 @@ class AdvancedResource(Resource):
     def render_PUT_advanced(self, request, response):
         self.payload = request.payload
         from coapthon.messages.response import Response
-        assert (isinstance(response, Response))
+        assert(isinstance(response, Response))
         response.payload = "Response changed through PUT"
         response.code = defines.Codes.CHANGED.number
+        
+        #light = json.loads(request.payload)     #Decode json(payload)
+        
+        #sensor = 21                             #GPIO pin number
 
-        light = json.loads(request.payload)  # Decode json(payload)
+        #gpio.setmode(gpio.BCM)
+        #gpio.setup(sensor, gpio.OUT)
+       
+        #if(int(light['light']) > 20):           #light sensor's threshhold = 20
+        #    gpio.output(sensor, True)           #led sensor on
+        #else:
+        #    gpio.output(sensor, False)          #led sensor off
 
-        sensor = 21  # GPIO pin number
+        import base64
+        from PIL import Image
+        from io import BytesIO
 
-        gpio.setmode(gpio.BCM)
-        gpio.setup(sensor, gpio.OUT)
+        img = json.loads(request.payload)
+        im = Image.open(BytesIO(base64.b64decode(img['img'])))
 
-        if (int(light['light']) > 20):  # light sensor's threshhold = 20
-            gpio.output(sensor, True)  # led sensor on
-        else:
-            gpio.output(sensor, False)  # led sensor off
-
+        im.save('saved.png', 'PNG')             #save image as 'saved.png'
+        
+        
         return self, response
 
     def render_DELETE_advanced(self, request, response):
         response.payload = "Response deleted"
         response.code = defines.Codes.DELETED.number
         return True, response
+
 
 class AdvancedResourceSeparate(Resource):
     def __init__(self, name="Advanced"):
@@ -245,6 +280,7 @@ class AdvancedResourceSeparate(Resource):
         return self, response, self.render_POST_separate
 
     def render_PUT_advanced(self, request, response):
+
         return self, response, self.render_PUT_separate
 
     def render_DELETE_advanced(self, request, response):
@@ -269,4 +305,3 @@ class AdvancedResourceSeparate(Resource):
     def render_DELETE_separate(self, request, response):
         response.payload = "Response deleted"
         return True, response
-

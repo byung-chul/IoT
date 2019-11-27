@@ -1,0 +1,8 @@
+{
+    "sdb_host": "127.0.0.1",
+    "sdb_user": "root",
+    "sdb_password": "6821",
+    "sdb_port": "3306",
+    "sdb_database": "uryotruck"
+  }
+  
