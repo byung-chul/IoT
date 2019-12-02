@@ -102,8 +102,8 @@ router.post('/finish', function(req, res, next) {
     const delivery_id = req.body.delivery_id;
 
     const query =
-            "UPDATE deliverylist SET delivery_type = 2 , driver_id = ? WHERE delivery_id = ?";
-        database.query(query, [driver_id, delivery_id])
+            "UPDATE deliverylist SET delivery_type = 2 WHERE delivery_id = ?";
+        database.query(query, [delivery_id])
             .then(function(results) {
                 if(results.affectedRows >= 1){
                     res.end("Success");

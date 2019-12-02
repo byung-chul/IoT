@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
         on('message', function(topic, payload) {
         var payload_json = JSON.parse(payload.toString())
         console.log('message', topic, payload.toString());
-        console.log(payload_json.Latitude);
+        //console.log(payload_json.Latitude);
     });
     
 });
