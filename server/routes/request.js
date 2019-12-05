@@ -98,7 +98,6 @@ router.post('/catch', function(req, res, next) {
 
 router.post('/finish', function(req, res, next) {
     
-    const driver_id = req.body.driver_id;
     const delivery_id = req.body.delivery_id;
 
     const query =
