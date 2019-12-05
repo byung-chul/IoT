@@ -8,6 +8,9 @@ var awsIot = require('aws-iot-device-sdk');
 //50km 이내에 배송 가능한 대기중인 배달요청 받아보기
 router.get('/', function(req, res, next) {
     
+    const id = req.query.id;
+
+    var car_id
     var now_lat;
     var now_lng;
     var paret;
@@ -20,33 +23,39 @@ router.get('/', function(req, res, next) {
        clientId: 'subscriber',
            host: 'aksvt2aysg9zx-ats.iot.us-east-2.amazonaws.com'
     });
-    
-    device.
-        on('connect', function() {
-        console.log('connect');
-        device.subscribe('Truck/1Ton/A001');
-        });
- 
-    device.
-        on('message', function(topic, payload) {
-        console.log(topic, payload.toString());
-        var payload_json = JSON.parse(payload.toString())
 
-        now_lat = payload_json.Latitude;
-        now_lng = payload_json.Longitude;
-        paret = payload_json.Paret;
-        weight = payload_json.Weight;
-        device.end();
-        
-        const query =
-            "SELECT *, ( 6371 * acos( cos( radians(?) ) * cos( radians( content_lat ) ) * cos( radians( content_lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( content_lat ) ) ) ) AS distance FROM deliverylist WHERE paret_count <= ? AND paret_weight <= ? AND delivery_type = 0  HAVING distance < 50 ORDER BY distance";
-        database.query(query, [now_lat, now_lng, now_lat, paret, weight])
+    const query =
+            "SELECT car_id FROM user WHERE id = ?";
+        database.query(query, [id])
             .then(function(results) {
-                res.end(JSON.stringify(results));
+                car_id = results[0].car_id;
+
+                device.
+                    on('connect', function() {
+                    console.log('connect');
+                    device.subscribe('Truck/1Ton/'+ car_id);
+                    });
+                
+                device.
+                    on('message', function(topic, payload) {
+                    console.log(topic, payload.toString());
+                    var payload_json = JSON.parse(payload.toString())
+                    
+                    now_lat = payload_json.Latitude;
+                    now_lng = payload_json.Longitude;
+                    paret = payload_json.Paret;
+                    weight = payload_json.Weight;
+                    device.end();
+                    
+                    const query =
+                        "SELECT *, ( 6371 * acos( cos( radians(?) ) * cos( radians( content_lat ) ) * cos( radians( content_lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( content_lat ) ) ) ) AS distance FROM deliverylist WHERE paret_count <= ? AND paret_weight <= ? AND delivery_type = 0  HAVING distance < 50 ORDER BY distance";
+                    database.query(query, [now_lat, now_lng, now_lat, paret, weight])
+                        .then(function(results) {
+                            res.end(JSON.stringify(results));
+                    });
+                
+                });
         });
-
-    });
-
 });
 
 //화물 회사가 배달요청하기(deliverylist테이블에 삽입)

@@ -23,6 +23,7 @@ router.post('/', function(req, res, next) {
     const id = req.body.id;
     const password = req.body.password;
     const phone_number = req.body.phone_number;
+    const car_id = req.body.car_id;
 
     const query =
         'SELECT id FROM user WHERE id=?';
@@ -42,8 +43,8 @@ router.post('/', function(req, res, next) {
                 return "duplicated";
             } else {
                 if (results.length === 0){
-                    const query = "INSERT INTO user (id, password, phone_number) VALUES (?, ?, ?)";
-                    return database.query(query, [id, password, phone_number]);
+                    const query = "INSERT INTO user (id, password, phone_number, car_id) VALUES (?, ?, ?, ?)";
+                    return database.query(query, [id, password, phone_number, car_id]);
                 } else{
                     res.end("phone_number is duplicated");
                 }

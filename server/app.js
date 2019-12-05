@@ -6,12 +6,13 @@ var bodyParser = require('body-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var loginRouter = require('./routes/login');
 var usersRouter = require('./routes/users');
 
+var loginRouter = require('./routes/login');
 var requestRouter = require('./routes/request');
 var testRouter = require('./routes/test');
 var checkRouter = require('./routes/check');
+var myinfoRouter = require('./routes/myinfo');
 
 var app = express();
 
@@ -41,6 +42,7 @@ app.use('/request', requestRouter);
 app.use('/login', loginRouter);
 app.use('/test', testRouter);
 app.use('/check', checkRouter);
+app.use('/myinfo', myinfoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
