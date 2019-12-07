@@ -1,5 +1,6 @@
 var express = require('express');
 var awsIot = require('aws-iot-device-sdk');
+var database = require('../database/mysql_connection');
 var router = express.Router();
 
 router.get('/', function (req, res, next) {
@@ -22,7 +23,7 @@ router.get('/info', function (req, res, next) {
 
 router.get('/car', function (req, res, next) {
 
-	const car_id = req.query.car_id;
+	const id = req.query.id;
 
     var device = awsIot.device({
         keyPath: './certs/8c7ea71244-private.pem.key',
