@@ -1,112 +1,77 @@
-Table
-    Customer
-        Id(VARCHAR(45))
+uryotruck
+
+    user
+
+        id(VARCHAR(45))
             고객의 ID
             PK
             NOT NULL 
-        pw(VARCHAR(45))
+        password(VARCHAR(45))
             고객의 Password
             NOT NULL
-        pNumber(VARCHAR(45))
+        phone_number(VARCHAR(45))
             고객의 연락처
             NOT NULL
-        cType(INT)
-            고객의 유형
-            1 = 화물차주
-            2 = 기업고객
+        car_id(INT)
+            고객의 차량id (RaspberryPi id)
+            default = NULL
+            화물을 맡기는 기업은 NULL
 
-    Car
-        car_ID(VARCHAR(45))
+    deliverylist
+
+        delivery_id(INT(11))
             PK
-            차량ID
+            Auto Increase
+            NOT NULL
+            배송 정보의 id (자동으로 생성)
 
-        ID(VARCHAR(45))
-            화물차주의 개인 ID
+        company_id(VARCHAR(45))
+            화물을 맡기려는 고객의 id
             Foreign Key
-
-        car_Type(INT)
-            차량 유형
-            톤수 1 / 5 / 10
-
-        car_now_Weight(INT)
-            현재 무게
-
-        car_Plus(INT)
-            더 실을 수 있는 파레트 수
-
-        car_N_lat(Float (10,6))      
-            현재위도
-
-        car_N_lng(Float (10,6))
-            현재경도
-
-        d1_lat(Float (10,6))
-            목적지1위도
-
-        d1_lng(Float (10,6))
-            목적지1경도
-
-        d2_lat(Float (10,6))
-            목적지2위도
-
-        d2_lng(Float (10,6))
-            목적지2경도    
-
-    Order
-        orderId(INT(11)) 
-            주문번호(주문내역의 ID)
-            PK
             NOT NULL
 
-        orderType(INT(11))
-            0 = 찾는중
-            1 = 배달중
-            2 = 배달완료
-
-        driver_Id(VARCHAR(45))
-            주문자(고객)의 id
-            NOT NULL
-            Foreign Key 
-        company_Id(INT(11))
-            기업의 id
-            NOT NULL
-            Foreign Key
         pay(INT(11))
-            건당 배송료
+            지불 금액
+            NOT NULL
 
-            실을 파레트 수
-            
-            실을 파레트의 무게
+        paret_count(INT(11))
+            화물 요청하려는 파레트의 수
+            NOT NULL
 
-            화물유형
-            1 = 냉동
-            2 = 냉장
-            3 = 상온
+        paret_weight(INT(11))
+            화물 요청하려는 파레트의 무게
+            NOT NULL
 
-시켜먹는사람이 주변에 내반경 얼마안에 대기중이있는사람이있냐
-있으면 선택해서 시켜요
+        content_type(INT(11))
+            배송을 맡기려는 물건의 유형
+            0 = 일반
+            1 = 냉장
+            2 = 냉동
+            default = 0
 
-내가 위치한 현재위치 반경 ~~~로 화물을 띄워줄꺼냐
-내가 가려는 목적지 주변 반걍 30키로 이내에 목적지로 배송을 희망하는 화물주인을 찾는거죠
+        content_lat(Float (10,6))      
+            현재위도
+            NOT NULL
 
-내주변에 화물이있냐?
-그 화물의 목적지가 나의 목적지 반경30키로이내냐?
-그리고 내가 그걸 실을 수가 있냐
+        content_lat(Float (10,6))      
+            현재경도
+            NOT NULL
 
+        content_lat(Float (10,6))      
+            목적지위도
+            NOT NULL
 
-로그인 
-매칭
+        content_lat(Float (10,6))      
+            목적지경도
+            NOT NULL
 
-    화물찾기 버튼을 누르면
-        목적지를 입력하세요
-            POST 목적지주소를 보냄
-            그럼 서버에서 위경도로 바꿔서 database update
-            S / F S를 받음
+        delivery_type(INT(11))
+            배송 상태
+            0 = 대기중
+            1 = 배송중
+            2 = 배송완료
 
-            /find GET 쿼리문(내 ID 차량ID ~~~~목적지)
-            혹시 대기중인 화물이 있냐(order table에서 order type이 0이고))(따로 테이블 orderId) 있으면 그 화물들에 대한 정보를 다보내주겠죠
-
-            수락을 한다면? POST (orderId , 차량id, 개인id)
-            매칭 성공 완료 S/F
-
-message Truck/1Ton/A001 {"Latitude": -1, "Longitude": "", "Paret": 4, "Weight": -1, "Temperature": 2}
+        driver_id(VARCHAR(45))
+            배송하는 차주의 id
+            delivery_type = 0이 아니면 할당
+            default = NULL
